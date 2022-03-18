@@ -1,1 +1,21 @@
 
+# 认识用户账号，生成证书
+UserCount ----- 用户账号
+
+   也就是集群外部访问时使用的用户。最常见的就是kubectl命令就是作为kubernetes-admin用户来执行，k8s本身不记录这些账号.
+认证的方式:
+     今天我们先学习默认认证方式：客户端证书   
+创建客户端证书：
+
+首先假设你装好了openssl (没装执行 sudo yum install openssl  openssl-devel)
+
+   1、创建一个文件夹叫做 ua/shenyi
+   2、cd 到 ua/shenyi目录下
+   3、执行
+  1)openssl genrsa -out client.key 2048    (这一步是生成客户端私钥)
+  2)openssl req -new -key client.key -out client.csr -subj "/CN=bingle.hou"
+  (根据私钥生成csr（中间生成得证书请求文件）， /CN指定了用户名bingle.hou)
+  3、sudo openssl x509 -req -in client.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out client.crt -days 365
+(根据k8s的CA证书生成我们用户的客户端证书client.crt)
+
+# 
